@@ -1,0 +1,10 @@
+server:
+  port: 8888
+  
+spring:
+  application:
+    name: WXServer
+    
+    
+wx: 
+ token: adc9ffa40273a5739b3359ca8e2cfe78 

@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+ 
+	<groupId>indigo</groupId>
+	<artifactId>WXServer</artifactId>
+	<packaging>jar</packaging>
+		<version>0.0.1</version>
+
+	<name>WXServer</name>
+	<description>WXServer</description>
+	
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.0.2.RELEASE</version>
+		<relativePath />
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<spring-cloud.version>Finchley.RC2</spring-cloud.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>IndigoNet</groupId>
+			<artifactId>IndigoNet</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>IndigoDB</groupId>
+			<artifactId>IndigoDB</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>3.5.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>18.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ant-contrib</groupId>
+			<artifactId>ant-contrib</artifactId>
+			<version>1.0b3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>Classloader</groupId>
+			<artifactId>Classloader</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>commons-codec</groupId>
+		    <artifactId>commons-codec</artifactId>
+		    <version>1.10</version>
+		</dependency>
+		
+ 
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<finalName>${project.artifactId}-${project.version}</finalName>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target/lib</outputDirectory>
+							<excludeTransitive>false</excludeTransitive>
+							<stripVersion>false</stripVersion>
+							<includeScope>runtime</includeScope>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>false</addClasspath>
+						</manifest>
+						<manifestEntries>
+							<Premain-Class>
+								com.fire.core.classloader.ClassOverride
+							</Premain-Class>
+						</manifestEntries>
+					</archive>
+
+					<excludes>
+						<exclude>**/*.properties</exclude>
+						<!-- <exclude>**/*.xml</exclude> -->
+						<exclude>**/*.yml</exclude>
+						<exclude>static/**</exclude>
+						<exclude>templates/**</exclude>
+						<exclude>**/*.proto</exclude>
+						<exclude>**/*.exe</exclude>
+						<exclude>**/*.bat</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-xmls</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/classes</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/src/main/java</directory>
+									<includes>
+										<include>**/*.xml</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+
+				<configuration>
+					<layout>ZIP</layout>
+					<includes>
+						<include>
+							<groupId>non-exists</groupId>
+							<artifactId>non-exists</artifactId>
+						</include>
+					</includes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+						<configuration>
+							<classifier>classes</classifier>
+							<attach>false</attach>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<!--这句很重要，ant会加载antcontrib.properties中定义的标签 -->
+								<taskdef
+									resource="net/sf/antcontrib/antcontrib.properties"
+									classpathref="maven.runtime.classpath" />
+								<if>
+									<equals arg1="${packaging}" arg2="jar" />
+
+									<then>
+
+										<property name="dist">target/deploy</property>
+										<property name="dist-tmp">target/deploy/tmp</property>
+										<property name="app-name">${project.artifactId}-${project.version}</property>
+										<mkdir dir="${dist-tmp}" />
+										<copy file="target/${app-name}.jar"
+											tofile="${dist-tmp}/${app-name}.jar" />
+										<unzip src="${dist-tmp}/${app-name}.jar"
+											dest="${dist-tmp}" />
+										<delete file="${dist-tmp}/${app-name}.jar" />
+										<delete dir="${dist}/3rd-lib" />
+										<delete dir="${dist}/log" />
+
+										<zip destfile="${dist}/${app-name}-pages.jar">
+											<zipfileset dir="${dist-tmp}/META-INF"
+												prefix="META-INF" />
+											<zipfileset dir="target/classes/static"
+												prefix="static" />
+											<!-- <zipfileset dir="target/classes/templates" prefix="templates" 
+												/> -->
+										</zip>
+
+										<move file="target/${app-name}-classes.jar"
+											todir="${dist}" />
+										<move todir="${dist}/3rd-lib">
+											<fileset dir="target/lib" />
+										</move>
+
+										<delete dir="${dist-tmp}" />
+
+										<copy todir="${dist}">
+											<fileset dir="target/classes">
+												<include name="**/*.properties" />
+												<!-- <include name="**/*.xml" /> -->
+												<include name="**/*.yml" />
+											</fileset>
+										</copy>
+
+									</then>
+								</if>
+							</tasks>
+
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+		</plugins>
+	</build>
+
+
+
+	<repositories>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+
+	<!-- 配置部署的远程仓库 -->
+	<distributionManagement>
+		<snapshotRepository>
+			<id>nexus-snapshots</id>
+			<name>nexus distribution snapshot repository</name>
+			<url>http://47.105.48.56:8999/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+
+		<repository>
+			<id>nexus-releases</id>
+			<name>nexus Release Repository</name>
+			<url>http://47.105.48.56:8999/nexus/content/repositories/releases/</url>
+		</repository>
+	</distributionManagement>
+
+</project>
